@@ -1,0 +1,91 @@
+{
+  "title": "Parker's Morning Briefing",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect the briefing service",
+        "description": "Enter a Cerebras API key. Gmail is optional; when enabled, Home Assistant opens Google's authorization page and manages token refresh for you. CalDAV works with iCloud Calendar using an Apple app-specific password.",
+        "data": {
+          "cerebras_api_key": "Cerebras API key",
+          "cerebras_model": "Cerebras model",
+          "gmail_enabled": "Connect Gmail (optional)",
+          "caldav_url": "CalDAV server URL",
+          "caldav_username": "CalDAV username / Apple Account email",
+          "caldav_password": "CalDAV password / app-specific password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect Gmail",
+        "description": "Google authorization is needed again. Continue to reconnect Gmail."
+      },
+      "reconfigure": {
+        "title": "Update briefing credentials",
+        "description": "Enter the Cerebras API key again to update it. You can also connect Gmail here; Home Assistant will manage its OAuth refresh token.",
+        "data": {
+          "cerebras_api_key": "Cerebras API key",
+          "cerebras_model": "Cerebras model",
+          "gmail_enabled": "Include Gmail"
+        }
+      },
+      "pick_implementation": {
+        "title": "Choose Google credentials",
+        "description": "Select the Google OAuth application credentials registered in Home Assistant."
+      },
+      "auth": {
+        "title": "Authorize Gmail",
+        "description": "Authorize the requested Gmail metadata access in Google."
+      },
+      "creation": {
+        "title": "Finish setup",
+        "description": "Complete the Gmail authorization to finish setting up the briefing."
+      }
+    },
+    "abort": {
+      "already_configured": "Morning Briefing is already configured.",
+      "oauth_implementation_unavailable": "No Google OAuth credentials are registered in Home Assistant.",
+      "oauth_error": "Google OAuth could not be completed. Check the credentials and redirect URL."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Briefing settings",
+        "description": "Choose which calendars and data sources to include. Select one or more CalDAV calendars to include only those; leave the calendar list empty to include all discovered calendars. Reopen this page to refresh calendar discovery.",
+        "data": {
+          "weather_enabled": "Include weather",
+          "weather_entity": "Weather entity",
+          "calendar_enabled": "Include calendar events",
+          "calendar_source": "Calendar source",
+          "calendar_entities": "Home Assistant calendar entities",
+          "calendar_names": "CalDAV calendars",
+          "caldav_url": "CalDAV server URL",
+          "caldav_username": "CalDAV username / Apple Account email",
+          "caldav_password": "CalDAV password / app-specific password",
+          "todo_enabled": "Include to-do items",
+          "todo_entities": "Home Assistant to-do lists",
+          "presence_enabled": "Include presence",
+          "presence_entities": "People",
+          "batteries_enabled": "Include low batteries",
+          "battery_entities": "Battery sensors",
+          "low_battery_percent": "Low battery threshold",
+          "max_calendar_events": "Maximum calendar events per day",
+          "max_todo_items": "Maximum to-do items",
+          "max_gmail_messages": "Maximum unread messages",
+          "max_words": "Maximum spoken words",
+          "speaker_script": "Announcement script",
+          "speaker_entity": "Speaker entity",
+          "speaker_volume": "Announcement volume",
+          "gmail_enabled": "Include Gmail"
+        }
+      }
+    },
+    "error": {
+      "gmail_not_linked": "Gmail is not linked. Use Reconfigure to connect Gmail first, or leave Gmail disabled."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_run": {"name": "Last run"}
+    }
+  }
+}

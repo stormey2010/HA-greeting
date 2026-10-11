@@ -1,0 +1,13 @@
+{
+  "domain": "morning_briefing",
+  "name": "Parker's Morning Briefing",
+  "codeowners": ["@stormey2010"],
+  "config_flow": true,
+  "dependencies": ["application_credentials"],
+  "documentation": "https://github.com/stormey2010/HA-greeting",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}
