@@ -18,7 +18,7 @@ If Cerebras is unavailable, the integration speaks a deterministic summary from 
 
 ### HACS
 
-Once this repository is published, add its GitHub URL in **HACS → Integrations → ⋮ → Custom repositories**, choose **Integration**, then install **Parker's Morning Briefing** and restart Home Assistant. The repository must contain `custom_components/morning_briefing/` at its root.
+Add this repository's GitHub URL in **HACS → Integrations → ⋮ → Custom repositories**, choose **Integration**, then install **Parker's Morning Briefing** and restart Home Assistant. The repository must contain `custom_components/morning_briefing/` at its root.
 
 ### Manual install
 
@@ -114,9 +114,9 @@ Home Assistant controls when this action runs. You can also run `morning_briefin
 - The status entity stores only a timestamp and source-level success/failure labels, not the briefing text or source payloads.
 - CalDAV recurrence expansion depends on the provider's CalDAV implementation. CalDAV VTODO support varies.
 
-## Earlier Studio Code Server script
+## Earlier single-file approach
 
-The top-level `morning_briefing.js` file is the earlier single-file approach. The integration under `custom_components/morning_briefing/` replaces it; do not run both because that would announce duplicate briefings.
+This integration replaces the earlier single-file approach. Do not run an older script version alongside it, or it may announce duplicate briefings.
 
 ## References
 
