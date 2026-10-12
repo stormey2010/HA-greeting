@@ -247,7 +247,6 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
             ("max_calendar_events", 8, 1, 30),
             ("max_todo_items", 4, 1, 20),
             ("max_gmail_messages", 4, 1, 5),
-            ("max_words", 135, 40, 220),
             ("speaker_volume", 29, 1, 100),
         ):
             schema[vol.Optional(key, default=current.get(key, default))] = selector.NumberSelector(

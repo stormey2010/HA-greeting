@@ -84,7 +84,7 @@ Open **Settings → Devices & services → Parker's Morning Briefing → Configu
 - Select the weather, calendar, to-do, person, and battery entities.
 - Change between CalDAV and Home Assistant calendars.
 - Add/remove CalDAV calendars through the multi-select.
-- Set the low battery threshold and item/word limits.
+- Set the low battery threshold and item limits. The integration does not impose a word limit on the generated briefing.
 - Choose the announcement script, speaker, and volume.
 
 The initial speaker defaults preserve the existing path: `script.new_script`, `media_player.parker_s_echo_dot`, and volume `29`. The script is called with `text`, `device`, and `volume` variables. Change these in options if your delivery script uses different input names.

@@ -31,7 +31,6 @@ DEFAULT_OPTIONS = {
     "max_calendar_events": 8,
     "max_todo_items": 4,
     "max_gmail_messages": 4,
-    "max_words": 135,
     "speaker_script": "script.new_script",
     "speaker_entity": "media_player.parker_s_echo_dot",
     "speaker_volume": 29,

@@ -71,7 +71,6 @@
           "max_calendar_events": "Maximum calendar events per day",
           "max_todo_items": "Maximum to-do items",
           "max_gmail_messages": "Maximum unread messages",
-          "max_words": "Maximum spoken words",
           "speaker_script": "Announcement script",
           "speaker_entity": "Speaker entity",
           "speaker_volume": "Announcement volume",
