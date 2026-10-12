@@ -3,7 +3,7 @@
 from datetime import timedelta
 
 DOMAIN = "morning_briefing"
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "number", "select", "switch", "text"]
 SERVICE_GENERATE = "generate"
 CONF_CEREBRAS_API_KEY = "cerebras_api_key"
 CONF_CEREBRAS_MODEL = "cerebras_model"
@@ -24,7 +24,8 @@ DEFAULT_BRIEFING_PROMPT = (
     "from their content. Briefly report the approximate unread count and how many "
     "filtered category messages were excluded; summarize only genuinely important "
     "messages, skip routine mail, and never read a message verbatim. If nothing is "
-    "important, say so briefly. Use only supplied facts; skip missing data and never invent."
+    "important, say so briefly. For email, consider only unread inbox messages from the configured recent-day window. "
+    "Use only supplied facts; skip missing data and never invent."
 )
 GMAIL_CATEGORIES = ["promotions", "social", "forums", "updates"]
 DEFAULT_OPTIONS = {
@@ -45,11 +46,13 @@ DEFAULT_OPTIONS = {
     "max_calendar_events": 8,
     "max_todo_items": 4,
     "max_gmail_messages": 4,
+    "gmail_lookback_days": 3,
     "gmail_max_chars": 2500,
     "gmail_excluded_categories": ["promotions", "social", "forums"],
     "cerebras_model": DEFAULT_MODEL,
     "ai_temperature": 0.2,
     "briefing_prompt": DEFAULT_BRIEFING_PROMPT,
+    "briefing_prompt_override": "",
     "speaker_script": "script.new_script",
     "speaker_entity": "media_player.parker_s_echo_dot",
     "speaker_volume": 29,

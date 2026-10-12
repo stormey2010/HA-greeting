@@ -243,7 +243,8 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
         schema[vol.Optional("briefing_prompt", default=current.get("briefing_prompt", DEFAULT_BRIEFING_PROMPT))] = selector.TextSelector(
             selector.TextSelectorConfig(multiline=True)
         )
-        schema[vol.Optional("cerebras_model", default=current.get("cerebras_model", self.config_entry.data.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL)))] = selector.SelectSelector(
+        model_default = self.config_entry.options.get("cerebras_model", self.config_entry.data.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL))
+        schema[vol.Optional("cerebras_model", default=model_default)] = selector.SelectSelector(
             selector.SelectSelectorConfig(
                 options=["gpt-oss-120b", "qwen-3-32b", "llama3.1-8b"],
                 mode=selector.SelectSelectorMode.DROPDOWN,
@@ -263,8 +264,9 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
             ("max_calendar_events", 8, 1, 30),
             ("max_todo_items", 4, 1, 20),
             ("max_gmail_messages", 4, 1, 20),
+            ("gmail_lookback_days", 3, 1, 14),
             ("gmail_max_chars", 2500, 250, 10000),
-            ("speaker_volume", 29, 1, 100),
+            ("speaker_volume", 29, 0, 100),
         ):
             schema[vol.Optional(key, default=current.get(key, default))] = selector.NumberSelector(
                 selector.NumberSelectorConfig(min=minimum, max=maximum, mode=selector.NumberSelectorMode.BOX, step=1)

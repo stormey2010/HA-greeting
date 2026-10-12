@@ -88,6 +88,8 @@ Open **Settings → Devices & services → Parker's Morning Briefing → Configu
 - Set the low battery threshold, maximum calendar and to-do items, unread Gmail review count (up to 20), per-email excerpt size, and which Gmail categories to exclude.
 - Choose the announcement script, speaker, and volume.
 
+Version 0.1.4 also adds a **Morning Briefing Settings** device with Home Assistant number, switch, select, and text entities for quick edits. Find them under **Settings → Devices & services → Entities** by searching for “Morning Briefing”. They update the existing config entry directly. Text entities are limited to 255 characters by Home Assistant; the AI prompt override is a short override, while the multiline prompt field in Configure holds the full prompt. For entity-ID lists and excluded Gmail categories, enter comma-separated values. Calendar labels use `calendar name = person; another calendar = person` format. API keys, Gmail OAuth, and the CalDAV app-specific password are never exposed as entities.
+
 The Cerebras API key and Gmail authorization are managed separately in **Reconfigure**. Leave the API key field blank to keep the saved key; use the Gmail reconnect checkbox only when authorization needs refreshing. Reconfigure does not reset the Configure options. CalDAV server credentials can be edited in Configure, and calendar selection and person labels can be changed there too.
 
 The initial speaker defaults preserve the existing path: `script.new_script`, `media_player.parker_s_echo_dot`, and volume `29`. The script is called with `text`, `device`, and `volume` variables. Change these in options if your delivery script uses different input names.
@@ -111,7 +113,7 @@ Home Assistant controls when this action runs. You can also run `morning_briefin
 ## Privacy and limits
 
 - The Cerebras key, CalDAV password, and OAuth tokens are stored in the Home Assistant config entry and are never written to source code or logs.
-- Gmail is opt-in. The integration checks unread Inbox counts, excludes the selected categories, and sends up to 20 selected message excerpts (with a configurable excerpt size) to Cerebras for importance filtering and summarization. Attachments are never fetched.
+- Gmail is opt-in. It considers only unread Inbox messages from the last three days by default (the lookback is adjustable from one to fourteen days), excludes the selected categories, and sends up to 20 selected message excerpts (with a configurable excerpt size) to Cerebras for importance filtering and summarization. Attachments are never fetched. Older unread messages are not included in counts or sent to Cerebras.
 - The default entity selections are explicit, and the integration never reads all Home Assistant states.
 - Email excerpts/headers and selected calendar/task titles are included in the Cerebras request when their sections are enabled.
 - The status entity stores only a timestamp and source-level success/failure labels, not the briefing text or source payloads.

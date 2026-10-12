@@ -75,6 +75,7 @@
           "max_calendar_events": "Maximum calendar events per day",
           "max_todo_items": "Maximum to-do items",
           "max_gmail_messages": "Maximum unread messages to review",
+          "gmail_lookback_days": "Unread Gmail lookback days",
           "gmail_max_chars": "Maximum email text per message (characters)",
           "gmail_excluded_categories": "Exclude Gmail categories",
           "speaker_script": "Announcement script",
