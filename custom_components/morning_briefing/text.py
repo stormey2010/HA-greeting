@@ -11,7 +11,7 @@ from .settings_common import device_info, save_option
 
 
 TEXT_SETTINGS = (
-    ("briefing_prompt_override", "AI prompt override (255 characters)", False, 255),
+    ("briefing_prompt_override", "AI prompt additions (255 characters)", False, 255),
     ("calendar_labels", "Calendar labels (semicolon separated)", False, 255),
     ("weather_entity", "Weather entity ID", False, 255),
     ("calendar_entities", "Calendar entity IDs (comma separated)", True, 255),

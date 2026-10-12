@@ -7,7 +7,7 @@ A standalone Home Assistant custom integration for gathering selected home data,
 - Date and weekday.
 - Weather from one selected weather entity.
 - Calendar events for **today and tomorrow** from either selected Home Assistant calendar entities or direct CalDAV access. iCloud Calendar is supported through CalDAV.
-- To-do items from selected Home Assistant lists or CalDAV VTODO collections where the provider exposes them.
+- Optional to-do data can be collected from selected Home Assistant lists or CalDAV VTODO collections, but the spoken briefing omits reminders and task items.
 - Optional selected people, low-battery sensors, and concise summaries of important unread Gmail messages.
 - One action, `morning_briefing.generate`, for the wake-up automation.
 - A `sensor.morning_briefing_last_run` entity with the last run time and per-source result only. It does not contain event subjects, email headers, or message content.
@@ -48,7 +48,7 @@ After setup, open the integration's **Configure** page. Set **Calendar source** 
 
 - Select one or more names to include only those calendars; clear the selection to include every discovered calendar.
 - Add or remove calendars by changing the multi-select and saving. Reopen the page after changing CalDAV credentials to refresh the available calendar list.
-- Optionally map calendar names to people under **Calendar labels**, one per line as `calendar name = person or label` (for example, `Emily's calendar = Emily`). Home Assistant calendar entity names and CalDAV calendar names are included with events.
+- Optionally map calendar names to people under **Calendar labels**, one per line as `calendar name = person or label` (for example, `Home = Emily` and `Work = Emily`). Home Assistant calendar entity names and CalDAV calendar names are included with events. The briefing says the person's name as the subject (for example, “Emily has two classes”), rather than changing the event to first person.
 
 No `calendar.*` entities are required for this direct CalDAV path. Event requests cover local midnight today through local midnight after tomorrow, so both today and tomorrow are included and date boundaries follow Home Assistant's time zone.
 
@@ -88,7 +88,7 @@ Open **Settings → Devices & services → Parker's Morning Briefing → Configu
 - Set the low battery threshold, maximum calendar and to-do items, unread Gmail review count (up to 20), per-email excerpt size, and which Gmail categories to exclude.
 - Choose the announcement script, speaker, and volume.
 
-Version 0.1.4 also adds a **Morning Briefing Settings** device with Home Assistant number, switch, select, and text entities for quick edits. Find them under **Settings → Devices & services → Entities** by searching for “Morning Briefing”. They update the existing config entry directly. Text entities are limited to 255 characters by Home Assistant; the AI prompt override is a short override, while the multiline prompt field in Configure holds the full prompt. For entity-ID lists and excluded Gmail categories, enter comma-separated values. Calendar labels use `calendar name = person; another calendar = person` format. API keys, Gmail OAuth, and the CalDAV app-specific password are never exposed as entities.
+Version 0.1.5 keeps the full multiline prompt in Configure and treats the 255-character **AI prompt additions** text entity as instructions appended to it, so editing that entity does not replace the main prompt. The default and safety instructions identify calendar owners using their configured labels, avoid first-person phrasing for labeled events, and omit reminders and task items. Version 0.1.4 also adds a **Morning Briefing Settings** device with Home Assistant number, switch, select, and text entities for quick edits. Find them under **Settings → Devices & services → Entities** by searching for “Morning Briefing”. They update the existing config entry directly. Text entities are limited to 255 characters by Home Assistant. For entity-ID lists and excluded Gmail categories, enter comma-separated values. Calendar labels use `calendar name = person; another calendar = person` format. API keys, Gmail OAuth, and the CalDAV app-specific password are never exposed as entities.
 
 The Cerebras API key and Gmail authorization are managed separately in **Reconfigure**. Leave the API key field blank to keep the saved key; use the Gmail reconnect checkbox only when authorization needs refreshing. Reconfigure does not reset the Configure options. CalDAV server credentials can be edited in Configure, and calendar selection and person labels can be changed there too.
 
