@@ -18,8 +18,10 @@ from .const import (
     CONF_CALDAV_USER,
     CONF_GMAIL_ENABLED,
     CONF_GMAIL_RECONNECT,
+    DEFAULT_BRIEFING_PROMPT,
     DEFAULT_MODEL,
     DEFAULT_OPTIONS,
+    GMAIL_CATEGORIES,
     DOMAIN,
 )
 
@@ -111,7 +113,6 @@ class MorningBriefingConfigFlow(
             self.context["pending_data"] = {
                 CONF_CEREBRAS_API_KEY: user_input.get(CONF_CEREBRAS_API_KEY, "").strip()
                 or entry.data.get(CONF_CEREBRAS_API_KEY, ""),
-                CONF_CEREBRAS_MODEL: user_input.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL),
             }
             self.context["pending_options"] = {
                 **entry.options,
@@ -135,12 +136,6 @@ class MorningBriefingConfigFlow(
                 {
                     vol.Optional(CONF_CEREBRAS_API_KEY, default=""): selector.TextSelector(
                         selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
-                    ),
-                    vol.Optional(CONF_CEREBRAS_MODEL, default=entry.data.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL)): selector.SelectSelector(
-                        selector.SelectSelectorConfig(
-                            options=["gpt-oss-120b", "qwen-3-32b", "llama3.1-8b"],
-                            mode=selector.SelectSelectorMode.DROPDOWN,
-                        )
                     ),
                     vol.Optional(CONF_GMAIL_ENABLED, default=entry.options.get(CONF_GMAIL_ENABLED, False)): selector.BooleanSelector(),
                     vol.Optional(CONF_GMAIL_RECONNECT, default=False): selector.BooleanSelector(),
@@ -207,7 +202,7 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
                     "password": user_input.pop(CONF_CALDAV_PASSWORD, caldav_value(self.config_entry, "password", "")),
                 }
                 return self.async_create_entry(
-                    title="", data={**user_input, "caldav": caldav_settings}
+                    title="", data={**self.config_entry.options, **user_input, "caldav": caldav_settings}
                 )
 
         calendars: list[dict[str, str]] = []
@@ -245,6 +240,18 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
         schema[vol.Optional("calendar_labels", default=current.get("calendar_labels", ""))] = selector.TextSelector(
             selector.TextSelectorConfig(multiline=True)
         )
+        schema[vol.Optional("briefing_prompt", default=current.get("briefing_prompt", DEFAULT_BRIEFING_PROMPT))] = selector.TextSelector(
+            selector.TextSelectorConfig(multiline=True)
+        )
+        schema[vol.Optional("cerebras_model", default=current.get("cerebras_model", self.config_entry.data.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL)))] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=["gpt-oss-120b", "qwen-3-32b", "llama3.1-8b"],
+                mode=selector.SelectSelectorMode.DROPDOWN,
+            )
+        )
+        schema[vol.Optional("gmail_excluded_categories", default=current.get("gmail_excluded_categories", ["promotions", "social", "forums"]))] = selector.SelectSelector(
+            selector.SelectSelectorConfig(options=GMAIL_CATEGORIES, multiple=True, mode=selector.SelectSelectorMode.DROPDOWN)
+        )
         for key, default in ((CONF_CALDAV_URL, caldav.get("url", "https://caldav.icloud.com")),
                              (CONF_CALDAV_USER, caldav.get("username", ""))):
             schema[vol.Optional(key, default=default)] = selector.TextSelector()
@@ -255,12 +262,16 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
             ("low_battery_percent", 25, 1, 100),
             ("max_calendar_events", 8, 1, 30),
             ("max_todo_items", 4, 1, 20),
-            ("max_gmail_messages", 4, 1, 5),
+            ("max_gmail_messages", 4, 1, 20),
+            ("gmail_max_chars", 2500, 250, 10000),
             ("speaker_volume", 29, 1, 100),
         ):
             schema[vol.Optional(key, default=current.get(key, default))] = selector.NumberSelector(
                 selector.NumberSelectorConfig(min=minimum, max=maximum, mode=selector.NumberSelectorMode.BOX, step=1)
             )
+        schema[vol.Optional("ai_temperature", default=current.get("ai_temperature", 0.2))] = selector.NumberSelector(
+            selector.NumberSelectorConfig(min=0, max=1, mode=selector.NumberSelectorMode.BOX, step=0.1)
+        )
         return self.async_show_form(step_id="init", data_schema=vol.Schema(schema), errors=errors)
 
 

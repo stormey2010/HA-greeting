@@ -20,10 +20,9 @@
       },
       "reconfigure": {
         "title": "Update briefing credentials",
-        "description": "Leave the Cerebras API key blank to keep the saved key. To grant Gmail message-reading access, keep Gmail enabled and select Reconnect Gmail.",
+        "description": "Leave the Cerebras API key blank to keep the saved key. To grant Gmail message-reading access, keep Gmail enabled and select Reconnect Gmail. Change prompts and other behavior under Configure.",
         "data": {
           "cerebras_api_key": "Cerebras API key",
-          "cerebras_model": "Cerebras model",
           "gmail_enabled": "Include Gmail",
           "gmail_reconnect": "Reconnect Gmail and grant message-read access"
         }
@@ -51,7 +50,7 @@
     "step": {
       "init": {
         "title": "Briefing settings",
-        "description": "Choose which calendars and data sources to include. Select one or more CalDAV calendars to include only those; leave the calendar list empty to include all discovered calendars. Add optional person labels as calendar name = person. Reopen this page to refresh calendar discovery.",
+        "description": "Edit all briefing behavior here. Select one or more CalDAV calendars to include only those; leave the calendar list empty to include all discovered calendars. Add optional person labels as calendar name = person. Reopen this page to refresh calendar discovery.",
         "data": {
           "weather_enabled": "Include weather",
           "weather_entity": "Weather entity",
@@ -60,6 +59,9 @@
           "calendar_entities": "Home Assistant calendar entities",
           "calendar_names": "CalDAV calendars",
           "calendar_labels": "Calendar labels (one per line: calendar name = person or label)",
+          "briefing_prompt": "Custom AI prompt",
+          "cerebras_model": "Cerebras model",
+          "ai_temperature": "AI creativity (temperature)",
           "caldav_url": "CalDAV server URL",
           "caldav_username": "CalDAV username / Apple Account email",
           "caldav_password": "CalDAV password / app-specific password",
@@ -73,6 +75,8 @@
           "max_calendar_events": "Maximum calendar events per day",
           "max_todo_items": "Maximum to-do items",
           "max_gmail_messages": "Maximum unread messages to review",
+          "gmail_max_chars": "Maximum email text per message (characters)",
+          "gmail_excluded_categories": "Exclude Gmail categories",
           "speaker_script": "Announcement script",
           "speaker_entity": "Speaker entity",
           "speaker_volume": "Announcement volume",

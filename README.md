@@ -30,7 +30,7 @@ After restart, open **Settings → Devices & services → Add integration**, sea
 
 Create an API key in [Cerebras Cloud](https://cloud.cerebras.ai/). Enter it in the integration setup flow; it is stored with the Home Assistant config entry, not in this repository or the Python source. Choose one of the offered model IDs in setup. The default is `gpt-oss-120b`.
 
-The integration sends a small normalized facts object to Cerebras. Calendar titles, selected presence/battery facts, and—if enabled—sender/subject/date plus text excerpts of unread email leave the Home Assistant host for summarization. Email text is limited to 2,500 characters per message; attachments are not downloaded or sent. Leave Gmail disabled if you do not want email content sent to Cerebras.
+The integration sends a normalized facts object to Cerebras. Calendar titles, selected presence/battery facts, and—if enabled—sender/subject/date plus text excerpts of unread email leave the Home Assistant host for summarization. Email excerpt size is configurable (250 to 10,000 characters per message); attachments are not downloaded or sent. Leave Gmail disabled if you do not want email content sent to Cerebras.
 
 ## Calendar setup
 
@@ -78,14 +78,17 @@ The integration does not need a manually pasted refresh token. Home Assistant st
 
 ## Configure the sources and speaker
 
-Open **Settings → Devices & services → Parker's Morning Briefing → Configure**. The options flow lets you:
+Open **Settings → Devices & services → Parker's Morning Briefing → Configure**. All non-secret behavior settings live here, and saving them updates the existing entry without removing it. You can:
 
 - Enable or disable weather, calendar, to-do, presence, battery, and Gmail independently.
 - Select the weather, calendar, to-do, person, and battery entities.
 - Change between CalDAV and Home Assistant calendars.
 - Add/remove CalDAV calendars through the multi-select.
-- Set the low battery threshold and item limits. The integration does not impose a word limit on the generated briefing.
+- Edit the full AI prompt, choose a Cerebras model, and adjust AI creativity (temperature). The integration does not impose a word limit on the generated briefing.
+- Set the low battery threshold, maximum calendar and to-do items, unread Gmail review count (up to 20), per-email excerpt size, and which Gmail categories to exclude.
 - Choose the announcement script, speaker, and volume.
+
+The Cerebras API key and Gmail authorization are managed separately in **Reconfigure**. Leave the API key field blank to keep the saved key; use the Gmail reconnect checkbox only when authorization needs refreshing. Reconfigure does not reset the Configure options. CalDAV server credentials can be edited in Configure, and calendar selection and person labels can be changed there too.
 
 The initial speaker defaults preserve the existing path: `script.new_script`, `media_player.parker_s_echo_dot`, and volume `29`. The script is called with `text`, `device`, and `volume` variables. Change these in options if your delivery script uses different input names.
 
@@ -108,7 +111,7 @@ Home Assistant controls when this action runs. You can also run `morning_briefin
 ## Privacy and limits
 
 - The Cerebras key, CalDAV password, and OAuth tokens are stored in the Home Assistant config entry and are never written to source code or logs.
-- Gmail is opt-in. The integration checks unread Inbox counts, filters promotional/social/forum categories, and sends up to five selected message excerpts (up to 2,500 characters each) to Cerebras for importance filtering and summarization. Attachments are never fetched.
+- Gmail is opt-in. The integration checks unread Inbox counts, excludes the selected categories, and sends up to 20 selected message excerpts (with a configurable excerpt size) to Cerebras for importance filtering and summarization. Attachments are never fetched.
 - The default entity selections are explicit, and the integration never reads all Home Assistant states.
 - Email excerpts/headers and selected calendar/task titles are included in the Cerebras request when their sections are enabled.
 - The status entity stores only a timestamp and source-level success/failure labels, not the briefing text or source payloads.
