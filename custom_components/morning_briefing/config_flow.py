@@ -17,6 +17,7 @@ from .const import (
     CONF_CALDAV_URL,
     CONF_CALDAV_USER,
     CONF_GMAIL_ENABLED,
+    CONF_GMAIL_RECONNECT,
     DEFAULT_MODEL,
     DEFAULT_OPTIONS,
     DOMAIN,
@@ -39,9 +40,9 @@ class MorningBriefingConfigFlow(
 
     @property
     def extra_authorize_data(self) -> dict[str, Any]:
-        """Ask Google for offline access using Gmail metadata scope only."""
+        """Ask Google for offline access to read selected Gmail message content."""
         return {
-            "scope": "https://www.googleapis.com/auth/gmail.metadata",
+            "scope": "https://www.googleapis.com/auth/gmail.readonly",
             "access_type": "offline",
             "prompt": "consent",
         }
@@ -108,7 +109,8 @@ class MorningBriefingConfigFlow(
         entry = self._get_reconfigure_entry()
         if user_input is not None:
             self.context["pending_data"] = {
-                CONF_CEREBRAS_API_KEY: user_input[CONF_CEREBRAS_API_KEY],
+                CONF_CEREBRAS_API_KEY: user_input.get(CONF_CEREBRAS_API_KEY, "").strip()
+                or entry.data.get(CONF_CEREBRAS_API_KEY, ""),
                 CONF_CEREBRAS_MODEL: user_input.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL),
             }
             self.context["pending_options"] = {
@@ -117,7 +119,9 @@ class MorningBriefingConfigFlow(
             }
             await self.async_set_unique_id(DOMAIN)
             self._abort_if_unique_id_mismatch()
-            if user_input.get(CONF_GMAIL_ENABLED) and "token" not in entry.data:
+            if user_input.get(CONF_GMAIL_ENABLED) and (
+                entry.data.get("gmail_scope_version", 0) < 2 or user_input.get(CONF_GMAIL_RECONNECT)
+            ):
                 return await self.async_step_pick_implementation()
             return self.async_update_reload_and_abort(
                 entry,
@@ -129,7 +133,7 @@ class MorningBriefingConfigFlow(
             step_id="reconfigure",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_CEREBRAS_API_KEY): selector.TextSelector(
+                    vol.Optional(CONF_CEREBRAS_API_KEY, default=""): selector.TextSelector(
                         selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
                     ),
                     vol.Optional(CONF_CEREBRAS_MODEL, default=entry.data.get(CONF_CEREBRAS_MODEL, DEFAULT_MODEL)): selector.SelectSelector(
@@ -139,6 +143,7 @@ class MorningBriefingConfigFlow(
                         )
                     ),
                     vol.Optional(CONF_GMAIL_ENABLED, default=entry.options.get(CONF_GMAIL_ENABLED, False)): selector.BooleanSelector(),
+                    vol.Optional(CONF_GMAIL_RECONNECT, default=False): selector.BooleanSelector(),
                 }
             ),
         )
@@ -153,6 +158,7 @@ class MorningBriefingConfigFlow(
 
     async def async_oauth_create_entry(self, data: dict[str, Any]) -> config_entries.ConfigFlowResult:
         """Create an entry or update its OAuth data without exposing tokens."""
+        data = {**data, "gmail_scope_version": 2}
         if self.source == config_entries.SOURCE_REAUTH:
             entry = self._get_reauth_entry()
             return self.async_update_reload_and_abort(
@@ -235,6 +241,9 @@ class MorningBriefingOptionsFlow(OptionsFlowWithReload):
             schema[vol.Optional(key, default=current.get(key, [] if key.endswith("entities") else ""))] = field_selector
         schema[vol.Optional("calendar_names", default=current.get("calendar_names", []))] = selector.SelectSelector(
             selector.SelectSelectorConfig(options=calendars, multiple=True, mode=selector.SelectSelectorMode.DROPDOWN)
+        )
+        schema[vol.Optional("calendar_labels", default=current.get("calendar_labels", ""))] = selector.TextSelector(
+            selector.TextSelectorConfig(multiline=True)
         )
         for key, default in ((CONF_CALDAV_URL, caldav.get("url", "https://caldav.icloud.com")),
                              (CONF_CALDAV_USER, caldav.get("username", ""))):

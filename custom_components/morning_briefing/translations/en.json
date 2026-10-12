@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Connect the briefing service",
-        "description": "Enter a Cerebras API key. Gmail is optional; when enabled, Home Assistant opens Google's authorization page and manages token refresh for you. CalDAV works with iCloud Calendar using an Apple app-specific password.",
+        "description": "Enter a Cerebras API key. Gmail is optional; when enabled, Home Assistant requests read-only access to summarize important unread messages and manages token refresh. CalDAV works with iCloud Calendar using an Apple app-specific password.",
         "data": {
           "cerebras_api_key": "Cerebras API key",
           "cerebras_model": "Cerebras model",
@@ -20,11 +20,12 @@
       },
       "reconfigure": {
         "title": "Update briefing credentials",
-        "description": "Enter the Cerebras API key again to update it. You can also connect Gmail here; Home Assistant will manage its OAuth refresh token.",
+        "description": "Leave the Cerebras API key blank to keep the saved key. To grant Gmail message-reading access, keep Gmail enabled and select Reconnect Gmail.",
         "data": {
           "cerebras_api_key": "Cerebras API key",
           "cerebras_model": "Cerebras model",
-          "gmail_enabled": "Include Gmail"
+          "gmail_enabled": "Include Gmail",
+          "gmail_reconnect": "Reconnect Gmail and grant message-read access"
         }
       },
       "pick_implementation": {
@@ -33,7 +34,7 @@
       },
       "auth": {
         "title": "Authorize Gmail",
-        "description": "Authorize the requested Gmail metadata access in Google."
+        "description": "Authorize read-only Gmail access so the briefing can filter and summarize unread messages."
       },
       "creation": {
         "title": "Finish setup",
@@ -50,7 +51,7 @@
     "step": {
       "init": {
         "title": "Briefing settings",
-        "description": "Choose which calendars and data sources to include. Select one or more CalDAV calendars to include only those; leave the calendar list empty to include all discovered calendars. Reopen this page to refresh calendar discovery.",
+        "description": "Choose which calendars and data sources to include. Select one or more CalDAV calendars to include only those; leave the calendar list empty to include all discovered calendars. Add optional person labels as calendar name = person. Reopen this page to refresh calendar discovery.",
         "data": {
           "weather_enabled": "Include weather",
           "weather_entity": "Weather entity",
@@ -58,6 +59,7 @@
           "calendar_source": "Calendar source",
           "calendar_entities": "Home Assistant calendar entities",
           "calendar_names": "CalDAV calendars",
+          "calendar_labels": "Calendar labels (one per line: calendar name = person or label)",
           "caldav_url": "CalDAV server URL",
           "caldav_username": "CalDAV username / Apple Account email",
           "caldav_password": "CalDAV password / app-specific password",
@@ -70,7 +72,7 @@
           "low_battery_percent": "Low battery threshold",
           "max_calendar_events": "Maximum calendar events per day",
           "max_todo_items": "Maximum to-do items",
-          "max_gmail_messages": "Maximum unread messages",
+          "max_gmail_messages": "Maximum unread messages to review",
           "speaker_script": "Announcement script",
           "speaker_entity": "Speaker entity",
           "speaker_volume": "Announcement volume",

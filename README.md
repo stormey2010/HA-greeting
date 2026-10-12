@@ -8,7 +8,7 @@ A standalone Home Assistant custom integration for gathering selected home data,
 - Weather from one selected weather entity.
 - Calendar events for **today and tomorrow** from either selected Home Assistant calendar entities or direct CalDAV access. iCloud Calendar is supported through CalDAV.
 - To-do items from selected Home Assistant lists or CalDAV VTODO collections where the provider exposes them.
-- Optional selected people, low-battery sensors, and Gmail metadata.
+- Optional selected people, low-battery sensors, and concise summaries of important unread Gmail messages.
 - One action, `morning_briefing.generate`, for the wake-up automation.
 - A `sensor.morning_briefing_last_run` entity with the last run time and per-source result only. It does not contain event subjects, email headers, or message content.
 
@@ -30,7 +30,7 @@ After restart, open **Settings → Devices & services → Add integration**, sea
 
 Create an API key in [Cerebras Cloud](https://cloud.cerebras.ai/). Enter it in the integration setup flow; it is stored with the Home Assistant config entry, not in this repository or the Python source. Choose one of the offered model IDs in setup. The default is `gpt-oss-120b`.
 
-The integration sends a small normalized facts object to Cerebras. Calendar titles, selected presence/battery facts, and—if enabled—Gmail sender/subject/date metadata leave the Home Assistant host for AI wording. It never sends Gmail bodies or attachments. Leave Gmail disabled if you do not want email metadata sent to Cerebras.
+The integration sends a small normalized facts object to Cerebras. Calendar titles, selected presence/battery facts, and—if enabled—sender/subject/date plus text excerpts of unread email leave the Home Assistant host for summarization. Email text is limited to 2,500 characters per message; attachments are not downloaded or sent. Leave Gmail disabled if you do not want email content sent to Cerebras.
 
 ## Calendar setup
 
@@ -46,9 +46,9 @@ Generate an app-specific password at [account.apple.com](https://account.apple.c
 
 After setup, open the integration's **Configure** page. Set **Calendar source** to **CalDAV**, enable calendar events, and choose calendars in **CalDAV calendars**:
 
-- Select one or more names to include only those calendars.
-- Clear the selection to include every calendar discovered on that account.
+- Select one or more names to include only those calendars; clear the selection to include every discovered calendar.
 - Add or remove calendars by changing the multi-select and saving. Reopen the page after changing CalDAV credentials to refresh the available calendar list.
+- Optionally map calendar names to people under **Calendar labels**, one per line as `calendar name = person or label` (for example, `Emily's calendar = Emily`). Home Assistant calendar entity names and CalDAV calendar names are included with events.
 
 No `calendar.*` entities are required for this direct CalDAV path. Event requests cover local midnight today through local midnight after tomorrow, so both today and tomorrow are included and date boundaries follow Home Assistant's time zone.
 
@@ -72,9 +72,9 @@ The integration does not need a manually pasted refresh token. Home Assistant st
 2. Configure the OAuth consent screen and add your Google account as a test user when the app is in Testing.
 3. Create a Google OAuth **Web application** client. Add `https://my.home-assistant.io/redirect/oauth` as an authorized redirect URI.
 4. In Home Assistant, open **Settings → Devices & services → ⋮ → Application credentials** and register the Google client ID and secret for **Parker's Morning Briefing**.
-5. Add the integration and turn on **Connect Gmail (optional)**. Home Assistant opens Google's consent flow and stores the OAuth result. The integration requests `gmail.metadata`; it lists only a small number of unread Inbox messages and fetches `From`, `Subject`, and `Date` headers. It doesn't read bodies or attachments. If you skip Gmail during first setup, use the integration's **Reconfigure** action later to connect it.
+5. Add the integration and turn on **Connect Gmail (optional)**. Home Assistant opens Google's consent flow and stores the OAuth result. The integration requests `gmail.readonly` to screen unread Inbox messages and summarize short text excerpts from the most relevant ones. Gmail promotional, social, and forum categories are filtered before summarization. Attachments are not downloaded or sent. If Gmail was linked before the scope changed, use **Reconfigure**, keep Gmail enabled, and select **Reconnect Gmail and grant message-read access**. This updates the token without removing the integration or its settings.
 
-`gmail.metadata` is a restricted Google scope. A personal OAuth app left in Testing may issue refresh tokens that expire after seven days; in that case Google authorization must be repeated periodically. Public HACS distribution can require Google's OAuth verification and security review, so users may need their own Google OAuth app credentials. A later token revocation starts Home Assistant's reauthentication flow.
+`gmail.readonly` is a restricted Google scope. A personal OAuth app left in Testing may issue refresh tokens that expire after seven days; in that case Google authorization must be repeated periodically. Public HACS distribution can require Google's OAuth verification and security review, so users may need their own Google OAuth app credentials. A later token revocation starts Home Assistant's reauthentication flow.
 
 ## Configure the sources and speaker
 
@@ -108,9 +108,9 @@ Home Assistant controls when this action runs. You can also run `morning_briefin
 ## Privacy and limits
 
 - The Cerebras key, CalDAV password, and OAuth tokens are stored in the Home Assistant config entry and are never written to source code or logs.
-- Gmail is opt-in and uses the metadata-only scope; no email body or attachment is fetched.
+- Gmail is opt-in. The integration checks unread Inbox counts, filters promotional/social/forum categories, and sends up to five selected message excerpts (up to 2,500 characters each) to Cerebras for importance filtering and summarization. Attachments are never fetched.
 - The default entity selections are explicit, and the integration never reads all Home Assistant states.
-- Email headers and selected calendar/task titles are included in the Cerebras request when their sections are enabled.
+- Email excerpts/headers and selected calendar/task titles are included in the Cerebras request when their sections are enabled.
 - The status entity stores only a timestamp and source-level success/failure labels, not the briefing text or source payloads.
 - CalDAV recurrence expansion depends on the provider's CalDAV implementation. CalDAV VTODO support varies.
 

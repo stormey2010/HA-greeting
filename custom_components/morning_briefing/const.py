@@ -8,6 +8,7 @@ SERVICE_GENERATE = "generate"
 CONF_CEREBRAS_API_KEY = "cerebras_api_key"
 CONF_CEREBRAS_MODEL = "cerebras_model"
 CONF_GMAIL_ENABLED = "gmail_enabled"
+CONF_GMAIL_RECONNECT = "gmail_reconnect"
 CONF_CALDAV_URL = "caldav_url"
 CONF_CALDAV_USER = "caldav_username"
 CONF_CALDAV_PASSWORD = "caldav_password"
@@ -21,6 +22,7 @@ DEFAULT_OPTIONS = {
     "calendar_source": "caldav",
     "calendar_entities": [],
     "calendar_names": [],
+    "calendar_labels": "",
     "todo_enabled": True,
     "todo_entities": [],
     "presence_enabled": False,
